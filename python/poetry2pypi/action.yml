@@ -29,4 +29,4 @@ runs:
     
     - name: Deploy & Publish
       shell: bash
-      run: poetry publish --skip-existing --build -u __token__ -p ${{ inputs.pypi_token }}
+      run: poetry publish --skip-existing --build -u __token__ -p ${{ inputs.pypi-token }}
