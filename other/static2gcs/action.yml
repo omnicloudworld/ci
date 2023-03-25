@@ -39,7 +39,7 @@ runs:
     - id: 'auth'
       uses: 'google-github-actions/auth@v1'
       with:
-        workload_identity_provider: projects/${{ inputs.project-num }}/locations/global/workloadIdentityPools/${{ inputs.wif-pool }}/providers/${{ inpurs.wif-provider }}
+        workload_identity_provider: projects/${{ inputs.project-num }}/locations/global/workloadIdentityPools/${{ inputs.wif-pool }}/providers/${{ inputs.wif-provider }}
         service_account: ${{ inputs.service-account }}@${{ inputs.project-id }}.iam.gserviceaccount.com
 
     - name: Set up Cloud SDK
