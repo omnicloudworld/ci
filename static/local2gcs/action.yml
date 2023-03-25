@@ -1,0 +1,52 @@
+name: Copy to Google Storage
+description: >-
+    Copied a content of a some local folder to Google Cloud Storage. Existing folder will be deleted.
+    The action needs Workload Identity Federation for authentication.
+
+inputs:
+  project-id:
+    description: Google Cloud Project ID
+    required: true
+  project-num:
+    description: Google Cloud Project NUM
+    required: true
+  wif-pool:
+    description: ID of Workload Identity Federation
+    required: true
+  wif-provider:
+    description: ID of Workload Identity Federation Provider
+    required: true
+  service-account:
+    description: The login part (before @) of your service account email
+    required: true
+  target-bucket:
+    description: Google Cloud Storage bucket for uploading to
+    required: true
+  bucket-path:
+    description: Path in Google Cloud Storage bucket for uploading to; should start from "/"
+    required: false
+  from-path:
+    description: Local path for uploading from
+    required: true
+
+
+runs:
+  using: "composite"
+  steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - id: 'auth'
+      uses: 'google-github-actions/auth@v1'
+      with:
+        workload_identity_provider: projects/${{ inputs.project-num }}/locations/global/workloadIdentityPools/${{ inputs.wif-pool }}/providers/${{ inpurs.wif-provider }}
+        service_account: ${{ inputs.service-account }}@${{ inputs.project-id }}.iam.gserviceaccount.com
+
+    - name: Set up Cloud SDK
+      uses: google-github-actions/setup-gcloud@v1
+
+    - name: Update Storage Folder
+      shell: bash
+      run: |
+        gsutil rm -r gs://${{ inputs.target-bucket }}${{ inputs.bucket-path }}/* || true
+        gsutil -m cp -r ${{ inputs.from-path }}/** gs://${{ inputs.target-bucket }}${{ inputs.bucket-path }}
